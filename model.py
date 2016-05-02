@@ -23,10 +23,16 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
 
+    def __repr__(self):
+        """Provide helpful representation when printed, for human readability."""
+
+        return "<User user_id=%s email=%s>" % (self.user_id, self.email)
+        
+
 
 # Put your Movie and Rating model classes here.
 class Movie(db.Model):
-    """Movies that will be rated."""
+    """Movie that will be rated by users."""
 
     __tablename__ = "movies"
 
@@ -36,7 +42,7 @@ class Movie(db.Model):
     imdb_url = db.Column(db.String(150), nullable=True)
 
 class Rating(db.Model):
-    """User ratings info."""
+    """Ratings score of movie given by users."""
 
     __tablename__ = "ratings"
 
