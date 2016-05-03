@@ -1,9 +1,7 @@
 """Utility file to seed ratings database from MovieLens data in seed_data/"""
 
 from sqlalchemy import func
-from model import User
-from model import Rating
-from model import Movie
+from model import User, Rating, Movie
 from datetime import datetime
 
 from model import connect_to_db, db
@@ -42,13 +40,12 @@ def load_movies():
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate users
-    User.query.delete()
+    Movie.query.delete()
 
     # Read u.item file and insert data
     for row in open("seed_data/u.item"):
         row = row.rstrip()
-        movie_list = row.split("|")
-        movie_id, title, released_str, imdb_url = movie_list[:4]
+        movie_id, title, released_str, imdb_url = row.split("|")[:4]
 
         if released_str:
             released_at = datetime.strptime(released_str, "%d-%b-%Y")
@@ -76,13 +73,12 @@ def load_ratings():
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate users
-    User.query.delete()
+    Rating.query.delete()
 
     # Read u.data file and insert data
     for row in open('seed_data/u.data'):
         row = row.rstrip()
-        ratings_list = row.split(' ')
-        movie_id, user_id, score = ratings_list[:3]
+        user_id, movie_id, score = row.split('\t')[:3]
 
         rating = Rating(movie_id=movie_id,
                         user_id=user_id,
@@ -94,9 +90,6 @@ def load_ratings():
     # Once we're done, we should commit our work
     db.session.commit()
 
-#####################
-# Movie_id error is duplicate key values from movies_pkey. If movie id is auto-incrementing,
-# is it a problem that this id needs to be referenced in ratings table?
 
 
 def set_val_user_id():
