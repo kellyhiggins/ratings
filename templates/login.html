@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Please login if you know what's good for you</h2>
+    <form action = 's'>
+
+
+
+
+
+    </form>
+
+
+    <ul>
+      {% for user in users %}
+          <li>
+              <a href="/users/{{ user.user_id }}">
+                {{ user.email }} ({{ user.user_id }})
+              </a>
+          </li>
+      {% endfor %}
+    </ul>
+
+{% endblock %}
