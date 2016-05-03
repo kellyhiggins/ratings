@@ -2,8 +2,9 @@
 
 from sqlalchemy import func
 from model import User
-# from model import Rating
-# from model import Movie
+from model import Rating
+from model import Movie
+from datetime import datetime
 
 from model import connect_to_db, db
 from server import app
@@ -46,13 +47,26 @@ def load_movies():
     # Read u.item file and insert data
     for row in open("seed_data/u.item"):
         row = row.rstrip()
-        
+        movie_list = row.split("|")
+        movie_id, title, released_str, imdb_url = movie_list[:4]
+
+        if released_str:
+            released_at = datetime.strptime(released_str, "%d-%b-%Y")
+        else:
+            released_at = None
+
+        movie = Movie(movie_id=movie_id,
+                      title=title[:-7],
+                      released_at=released_at,
+                      imdb_url=imdb_url)
+        # print title
 
         # We need to add to the session or it won't ever be stored
-        db.session.add(user)
+        db.session.add(movie)
 
     # Once we're done, we should commit our work
     db.session.commit()
+
 
 
 def load_ratings():
@@ -64,11 +78,26 @@ def load_ratings():
     # we won't be trying to add duplicate users
     User.query.delete()
 
+    # Read u.data file and insert data
+    for row in open('seed_data/u.data'):
+        row = row.rstrip()
+        ratings_list = row.split(' ')
+        movie_id, user_id, score = ratings_list[:3]
+
+        rating = Rating(movie_id=movie_id,
+                        user_id=user_id,
+                        score=score)
+
         # We need to add to the session or it won't ever be stored
-        db.session.add(user)
+        db.session.add(rating)
 
     # Once we're done, we should commit our work
     db.session.commit()
+
+#####################
+# Movie_id error is duplicate key values from movies_pkey. If movie id is auto-incrementing,
+# is it a problem that this id needs to be referenced in ratings table?
+
 
 def set_val_user_id():
     """Set value for the next user_id after seeding database"""
