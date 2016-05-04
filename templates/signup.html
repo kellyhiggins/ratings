@@ -1,16 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Please login if you know what's good for you</h2>
+    <h2>Sign up for our service, or you'll regret it!</h2>
     
     <form action = '/signup' method="POST">
       <label>Email Address: <input type = "text" name = "email">
       </label>
-      <label>Password: <input type = "text" name = "password">
+      <label>Create a Password: <input type = "text" name = "password">
       </label>
       <input type = "submit" value = "Login!">
     </form>
-
 
 
 {% endblock %}
