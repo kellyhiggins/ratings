@@ -149,20 +149,25 @@ def rate_movie():
     score = request.form.get("score")
     movie_id = request.form.get("movie_id")
     user_id = session['user_id']
-# We create a possible user object to query if the user's email is in the User Class or user table.
-# We query by email, since this will be unique to each user, and return the first.
-# If this user doesn't exist yet, it will return none. (.one() throws an error if row doesn't exist or is >1)
-    possible_rating = Rating.query.filter(Rating.user_id == 'user_id', Rating.movie_id == 'movie_id').all()
+
+# We create a possible_rating object to query if the user_id AND movie_id is in the Rating table
+# Return first (so object returns instead of a singular item in a list using all())
+    possible_rating = Rating.query.filter(Rating.user_id == user_id, Rating.movie_id == movie_id).first()
+    
+# If this score does not yet exist, we will add to the session database. (.one() throws an error if row doesn't exist or is >1)
+# If this score already exists, we will update the value of the existing score
     if possible_rating:
-        #FIXME add update database entry
-        update
+        # update the value of the existing score
+        possible_rating.score = score
         flash("We are considering your update.")
-# Add user to user database
     else:
-        db.session.add(possible_rating)
+        # instantiate new rating to add to the user database 
+        new_rating = Rating(score=score, movie_id=movie_id, user_id=user_id)
+        db.session.add(new_rating)
         flash("We are considering your submission.")
 
     db.session.commit()
+    return redirect('/movies')
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
