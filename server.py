@@ -88,7 +88,9 @@ def process_login():
         session['user_id'] = possible_user.user_id
         flash("You are logged in!")
         # takes user to the users app route, not an html page
-        return redirect('/users')
+        user_id = possible_user.user_id
+        # used string formatting to insert user_id in the url to redirect to users details page
+        return redirect('/users/%s' % user_id)
     else:
         flash("Incorrect login, dummy. Try harder.")
         return redirect('/login')
@@ -120,7 +122,47 @@ def show_user(user_id):
     ratings = user.ratings
     return render_template('user_details.html', user=user, ratings=ratings)
 
+@app.route('/movies')
+def list_movies():
+    """Lists all movies where each movie title is a link to a details page."""
 
+    # query all records in Movie class to create 1 object of all movies, order results by title
+    movies = Movie.query.order_by('title').all()
+
+    return render_template('movies.html', movies=movies)
+
+@app.route('/movies/<int:movie_id>')
+def show_movie(movie_id):
+    """Show the details of a particular movie."""
+
+    #Querying Movie table to get movie object
+    movie = Movie.query.get(movie_id)
+
+    # getting ratings from movie object since tables are oined in the data model by db.relationship
+    ratings = movie.ratings
+
+    return render_template('movie_details.html', movie=movie, ratings=ratings)
+
+@app.route('/rate_movie', methods=["POST"])
+def rate_movie():
+
+    score = request.form.get("score")
+    movie_id = request.form.get("movie_id")
+    user_id = session['user_id']
+# We create a possible user object to query if the user's email is in the User Class or user table.
+# We query by email, since this will be unique to each user, and return the first.
+# If this user doesn't exist yet, it will return none. (.one() throws an error if row doesn't exist or is >1)
+    possible_rating = Rating.query.filter(Rating.user_id == 'user_id', Rating.movie_id == 'movie_id').all()
+    if possible_rating:
+        #FIXME add update database entry
+        update
+        flash("We are considering your update.")
+# Add user to user database
+    else:
+        db.session.add(possible_rating)
+        flash("We are considering your submission.")
+
+    db.session.commit()
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
