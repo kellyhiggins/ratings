@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Moooovies</h2>
+    <ul>
+      <!-- looping through movie records in movies object -->
+      {% for movie in movies %}
+          <li>
+            <!-- displaying movie titles and link to movies detail page -->
+              <a href="/movies/{{ movie.movie_id }}">
+                {{ movie.title }}
+              </a>
+          </li>
+      {% endfor %}
+    </ul>
+
+{% endblock %}

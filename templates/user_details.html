@@ -1,0 +1,17 @@
+<!-- shows informatin about a particular user (age, zipcode, list of movies rated, scores
+) -->
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>User Details</h2>
+    <ul>
+     <!-- Passed through user object, accessing age and zipcode attributes -->
+          <li>Age: {{ user.age }}</li>
+          <li>Zipcode: {{ user.zipcode }}</li>
+          <li>{% for rating in ratings %}
+            <!-- for every rating that has been parsed from the ratings object that was passed through, we are able to display its score. Since the dbs have an established relationship, we can access the title from the movies table -->
+            {{rating.score}}: {{rating.movie.title}}</br>
+        </li>{% endfor %}
+    </ul>
+              <!-- <a href="/users/{{ user.user_id }}"> -->
+{% endblock %}

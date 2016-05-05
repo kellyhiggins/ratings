@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Mooovie Details</h2>
+    <h3>{{ movie.title }}</h3>
+    <h3>Movie Scores:</h3>
+    <ul>
+          {% for rating in ratings %}
+            <!-- for every rating that has been parsed from the ratings object that was passed through, we are able to display its score. Since the dbs have an established relationship, we can access the title from the movies table -->
+            <li>{{rating.score}}</li>
+        {% endfor %}
+        </br>
+    </ul>
+    <form action = '/rate_movie' method="POST">
+       <input type="hidden" name="movie_id" value="{{movie.movie_id}}">
+        {% if session.get('user_id') %} 
+            Give us your puny opinion, and rate this movie!
+            <select name="score">
+              <option value="1" >1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </br>
+            <input type = "submit">
+        {% else %}
+            <a href="/login">Log In to Rate this Movie</a>
+    {% endif %}
+
+    </form>  
+
+{% endblock %}
