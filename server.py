@@ -131,17 +131,35 @@ def list_movies():
 
     return render_template('movies.html', movies=movies)
 
-@app.route('/movies/<int:movie_id>')
+@app.route('/movies/<int:movie_id>', methods=['GET'])
 def show_movie(movie_id):
     """Show the details of a particular movie."""
 
     #Querying Movie table to get movie object
     movie = Movie.query.get(movie_id)
+    user_id = session.get('user_id')
 
+    if user_id:
+        user_rating = Rating.query.filter_by(
+            movie_id=movie_id, user_id=user_id).first()
+    else:
+        user_rating = None
+
+    # Get the average rating of a movie
+    rating_scores = [r.score for r in movie.ratings]
+    avg_rating = float(sum(rating_scores))/len(rating_scores)
+
+    prediction = None
+
+    if (not user_rating) and user_id:
+        user = User.query.get(user_id)
+        if user:
+            prediction = user.predict_rating(movie)
     # getting ratings from movie object since tables are oined in the data model by db.relationship
     ratings = movie.ratings
 
-    return render_template('movie_details.html', movie=movie, ratings=ratings)
+    return render_template('movie_details.html', 
+        movie=movie, ratings=ratings, user_rating=user_rating, average=avg_rating, prediction=prediction)
 
 @app.route('/rate_movie', methods=["POST"])
 def rate_movie():

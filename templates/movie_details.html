@@ -4,14 +4,11 @@
 
     <h2>Mooovie Details</h2>
     <h3>{{ movie.title }}</h3>
-    <h3>Movie Scores:</h3>
-    <ul>
-          {% for rating in ratings %}
-            <!-- for every rating that has been parsed from the ratings object that was passed through, we are able to display its score. Since the dbs have an established relationship, we can access the title from the movies table -->
-            <li>{{rating.score}}</li>
-        {% endfor %}
-        </br>
-    </ul>
+    <p>Average Rating: {{ average }}</p>
+    {% if prediction %}
+    <p>We predict you will rate this movie {{ prediction }}.
+    </p></br>
+    {% endif %}
     <form action = '/rate_movie' method="POST">
        <input type="hidden" name="movie_id" value="{{movie.movie_id}}">
         {% if session.get('user_id') %} 
@@ -30,5 +27,14 @@
     {% endif %}
 
     </form>  
+    <h3>Movie Scores:</h3>
+    <ul>
+          {% for rating in ratings %}
+            <!-- for every rating that has been parsed from the ratings object that was passed through, we are able to display its score. Since the dbs have an established relationship, we can access the title from the movies table -->
+            <li>{{rating.score}}</li>
+        {% endfor %}
+        </br>
+    </ul>
+
 
 {% endblock %}
